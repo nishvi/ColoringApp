@@ -1,20 +1,14 @@
 import { GoogleGenAI } from "@google/genai";
 
-declare var process: {
-  env: {
-    API_KEY: string;
-  };
-};
-
-const getAI = () => new GoogleGenAI({ apiKey: process.env.API_KEY });
+const getAI = () => new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
 
 export const generateLineArt = async (prompt: string): Promise<string> => {
   const ai = getAI();
-  const fullPrompt = `A high-quality, professional black and white line art coloring page for young children. 
+  const fullPrompt = `Create a high-quality, professional black and white line art coloring page for young children. 
     Subject: ${prompt}. 
-    Style: Bold, thick clean black outlines, pure white background, zero grayscale, no shading, no gradients, 
-    large areas to color, extremely simple shapes, whimsical and friendly character design, professional 
-    children's coloring book style. Only output the line art image.`;
+    Style: Extremely bold, thick clean black outlines, pure white background, zero grayscale, no shading, no gradients, 
+    large simple areas to color, whimsical and friendly character design. 
+    Make it look like a high-end coloring book page. Only output the line art image.`;
 
   const response = await ai.models.generateContent({
     model: 'gemini-2.5-flash-image',
@@ -55,11 +49,11 @@ export const colorLineArt = async (lineArtBase64: string, originalPrompt: string
           },
         },
         {
-          text: `Please color this line art vibrantly for a child's coloring book preview. 
+          text: `Vibrantly color this line art for a child's coloring book preview. 
             The subject is ${originalPrompt}. 
-            Instructions: Use bright, happy, cheerful primary and secondary colors. 
-            Keep the black outlines perfectly intact. Make it look like it was colored 
-            beautifully with markers or crayons. Colorful and fun background.`,
+            Instructions: Use bright, cheerful primary and secondary colors. 
+            Keep the black outlines perfectly intact. Make it look like a beautifully finished marker drawing. 
+            Add a simple, colorful, happy background.`,
         },
       ],
     },
