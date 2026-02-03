@@ -1,21 +1,14 @@
-
 import { GoogleGenAI } from "@google/genai";
-
-// Declare process for TypeScript so the build doesn't fail
-declare var process: {
-  env: {
-    API_KEY: string;
-  };
-};
 
 const getAI = () => new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 export const generateLineArt = async (prompt: string): Promise<string> => {
   const ai = getAI();
-  const fullPrompt = `A high-quality, simple black and white line art coloring page for kids. 
+  const fullPrompt = `A high-quality, professional black and white line art coloring page for young children. 
     Subject: ${prompt}. 
-    Pure white background, clean bold black outlines, no grey areas, no shading, minimal detail, 
-    professional line art, coloring book style.`;
+    Style: Bold, thick clean black outlines, pure white background, zero grayscale, no shading, no gradients, 
+    large areas to color, extremely simple shapes, whimsical and friendly character design, professional 
+    children's coloring book style. Only output the line art image.`;
 
   const response = await ai.models.generateContent({
     model: 'gemini-2.5-flash-image',
@@ -43,7 +36,6 @@ export const generateLineArt = async (prompt: string): Promise<string> => {
 
 export const colorLineArt = async (lineArtBase64: string, originalPrompt: string): Promise<string> => {
   const ai = getAI();
-  // Extract pure base64
   const base64Data = lineArtBase64.split(',')[1];
   
   const response = await ai.models.generateContent({
@@ -57,9 +49,11 @@ export const colorLineArt = async (lineArtBase64: string, originalPrompt: string
           },
         },
         {
-          text: `Please color this line art vibrantly for a child's coloring book. 
-            Maintain the exact same shapes and characters. 
-            Make it colorful, cheerful, and bright. The subject is ${originalPrompt}.`,
+          text: `Please color this line art vibrantly for a child's coloring book preview. 
+            The subject is ${originalPrompt}. 
+            Instructions: Use bright, happy, cheerful primary and secondary colors. 
+            Keep the black outlines perfectly intact. Make it look like it was colored 
+            beautifully with markers or crayons. Colorful and fun background.`,
         },
       ],
     },
