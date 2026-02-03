@@ -1,70 +1,37 @@
 
-import { GoogleGenAI } from "@google/genai";
-
-const getAI = () => new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
-
-export const generateLineArt = async (prompt: string): Promise<string> => {
-  const ai = getAI();
-  const fullPrompt = `A high-quality, simple black and white line art coloring page for kids. 
-    Subject: ${prompt}. 
-    Pure white background, clean bold black outlines, no grey areas, no shading, minimal detail, 
-    professional line art, coloring book style.`;
-
-  const response = await ai.models.generateContent({
-    model: 'gemini-2.5-flash-image',
-    contents: {
-      parts: [{ text: fullPrompt }],
-    },
-    config: {
-      imageConfig: {
-        aspectRatio: "1:1"
-      }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Magic Color Adventures</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Quicksand', sans-serif;
+      background-color: #fefce8; /* light yellow-50 */
     }
-  });
-
-  for (const part of response.candidates?.[0]?.content?.parts || []) {
-    if (part.inlineData) {
-      return `data:image/png;base64,${part.inlineData.data}`;
+    .scribble-border {
+      border: 4px solid #000;
+      border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
     }
+  </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.2.4",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.39.0",
+    "vite": "https://esm.sh/vite@^7.3.1",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.3"
   }
-
-  throw new Error("Failed to generate line art.");
-};
-
-export const colorLineArt = async (lineArtBase64: string, originalPrompt: string): Promise<string> => {
-  const ai = getAI();
-  // Extract pure base64
-  const base64Data = lineArtBase64.split(',')[1];
-  
-  const response = await ai.models.generateContent({
-    model: 'gemini-2.5-flash-image',
-    contents: {
-      parts: [
-        {
-          inlineData: {
-            data: base64Data,
-            mimeType: 'image/png',
-          },
-        },
-        {
-          text: `Please color this line art vibrantly for a child's coloring book. 
-            Maintain the exact same shapes and characters. 
-            Make it colorful, cheerful, and bright. The subject is ${originalPrompt}.`,
-        },
-      ],
-    },
-    config: {
-      imageConfig: {
-        aspectRatio: "1:1"
-      }
-    }
-  });
-
-  for (const part of response.candidates?.[0]?.content?.parts || []) {
-    if (part.inlineData) {
-      return `data:image/png;base64,${part.inlineData.data}`;
-    }
-  }
-
-  throw new Error("Failed to color the image.");
-};
+}
+</script>
+</head>
+<body class="min-h-screen">
+  <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
