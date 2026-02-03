@@ -1,5 +1,11 @@
 import { GoogleGenAI } from "@google/genai";
 
+declare var process: {
+  env: {
+    API_KEY: string;
+  };
+};
+
 const getAI = () => new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 export const generateLineArt = async (prompt: string): Promise<string> => {
